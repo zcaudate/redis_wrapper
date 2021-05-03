@@ -479,11 +479,17 @@ redis_push_record(PG_FUNCTION_ARGS)
 		bool        typisvarlena;
 		int keycol  = -1;
 		char *outputstr = NULL;
+
+#if PG_VERSION_NUM >= 110000
+		Form_pg_attribute attr = TupleDescAttr(tupdesc, i);
+#else
+		Form_pg_attribute attr = tupdesc->attrs[i];
+#endif		
 		
-		if (tupdesc->attrs[i]->attisdropped)
+		if (attr->attisdropped)
 			continue;
 		
-		attname = NameStr(tupdesc->attrs[i]->attname);
+		attname = NameStr(attr->attname);
 		for (k = 0; k < nkeys; k++)
 			if ( strcmp(attname, keystr[k]) == 0)
 			{
@@ -491,7 +497,7 @@ redis_push_record(PG_FUNCTION_ARGS)
 				break;
 			}
 
-	    getTypeOutputInfo(tupdesc->attrs[i]->atttypid,
+	    getTypeOutputInfo(attr->atttypid,
                           &typoutput, &typisvarlena);
 		
 		origval = heap_getattr(tuple, i + 1, tupdesc, &isnull);
