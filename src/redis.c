@@ -238,6 +238,7 @@ redis_command(PG_FUNCTION_ARGS)
 			break;
 		case REDIS_REPLY_NIL:
 			returnval = "nil";
+			break;
 		case REDIS_REPLY_ARRAY:
 			returnval = get_reply_array(reply);
 			break;
@@ -315,6 +316,7 @@ redis_command_argv(PG_FUNCTION_ARGS)
 	{
 		case REDIS_REPLY_STRING:
 			pg_verifymbstr(reply->str, reply->len, false);
+			__attribute__ ((fallthrough));
 		case REDIS_REPLY_STATUS:
 			/* assume status reply encoding is ok */
 			returnval = pstrdup(reply->str);
