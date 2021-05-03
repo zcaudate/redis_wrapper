@@ -1,0 +1,3 @@
+redis.so
+src/redis.o
+sql/redis--*.sql
